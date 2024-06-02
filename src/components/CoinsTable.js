@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CryptoState } from "../CryptoContext";
-import { CoinList } from "../config/api";
-import axios from "axios";
 import {
   Container,
   LinearProgress,

@@ -8,7 +8,6 @@ import {
   Modal,
   Tab,
   Tabs,
-  Typography,
   makeStyles,
 } from "@material-ui/core";
 import GoogleButton from "react-google-button";
