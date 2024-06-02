@@ -5,6 +5,7 @@ import axios from "axios";
 import {
   Container,
   LinearProgress,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -21,18 +22,30 @@ import { useHistory } from "react-router-dom";
 import { numberWithCommas } from "./Banner/Carousel";
 import { Pagination } from "@material-ui/lab";
 
-const CoinsTable = () => {
-
+export default function CoinsTable() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const history = useHistory();
 
-  const { currency, symbol, coins, loading, fetchCoins } = CryptoState();
-  
-  useEffect(() => {
-    fetchCoins();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currency]);
+  const { symbol, coins, loading } = CryptoState();
+
+  const useStyles = makeStyles({
+    row: {
+      backgroundColor: "#16171a",
+      cursor: "pointer",
+      "&:hover": {
+        backgroundColor: "#131111",
+      },
+      fontFamily: "Montserrat",
+    },
+    pagination: {
+      "& .MuiPaginationItem-root": {
+        color: "gold",
+      },
+    },
+  });
+
+  const classes = useStyles();
+  const history = useHistory();
 
   const darkTheme = createTheme({
     palette: {
@@ -51,24 +64,6 @@ const CoinsTable = () => {
     );
   };
 
-  const useStyles = makeStyles(() => ({
-    row: {
-      backgroundColor: "#16171a",
-      cursor: "pointer",
-      "&:hover": {
-        backgroundColor: "#131111",
-      },
-      fontFamily: "Montserrat",
-    },
-    pagination: {
-      "& .MuiPaginationItem-root": {
-        color: "gold",
-      },
-    },
-  }));
-
-  const classes = useStyles();
-
   return (
     <ThemeProvider theme={darkTheme}>
       <Container style={{ textAlign: "center" }}>
@@ -79,35 +74,34 @@ const CoinsTable = () => {
           Cryptocurrency Prices by Market Cap
         </Typography>
         <TextField
-          label="Search for a crypto currency..."
+          label="Search For a Crypto Currency.."
           variant="outlined"
           style={{ marginBottom: 20, width: "100%" }}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <TableContainer>
+        <TableContainer component={Paper}>
           {loading ? (
             <LinearProgress style={{ backgroundColor: "gold" }} />
           ) : (
-            <Table>
+            <Table aria-label="simple table">
               <TableHead style={{ backgroundColor: "#EEBC1D" }}>
                 <TableRow>
-                  {["Coin", "Price", "24h Change", "Market Cap"].map((head) => {
-                    return (
-                      <TableCell
-                        style={{
-                          color: "black",
-                          fontWeight: "700",
-                          fontFamily: "Montserrat",
-                        }}
-                        key={head}
-                        align={head === "Coin" ? "" : "right"}
-                      >
-                        {head}
-                      </TableCell>
-                    );
-                  })}
+                  {["Coin", "Price", "24h Change", "Market Cap"].map((head) => (
+                    <TableCell
+                      style={{
+                        color: "black",
+                        fontWeight: "700",
+                        fontFamily: "Montserrat",
+                      }}
+                      key={head}
+                      align={head === "Coin" ? "left" : "right"}
+                    >
+                      {head}
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {handleSearch()
                   .slice((page - 1) * 10, (page - 1) * 10 + 10)
@@ -177,23 +171,23 @@ const CoinsTable = () => {
             </Table>
           )}
         </TableContainer>
+
+        {/* Comes from @material-ui/lab */}
         <Pagination
+          count={parseInt((handleSearch()?.length / 10).toFixed(0))}
           style={{
             padding: 20,
             width: "100%",
             display: "flex",
             justifyContent: "center",
           }}
-          className={{ ul: classes.pagination }}
-          count={(handleSearch()?.length / 10).toFixed(0)}
+          classes={{ ul: classes.pagination }}
           onChange={(_, value) => {
             setPage(value);
             window.scroll(0, 450);
           }}
-        ></Pagination>
+        />
       </Container>
     </ThemeProvider>
   );
-};
-
-export default CoinsTable;
+}
